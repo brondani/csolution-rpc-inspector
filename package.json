@@ -1,0 +1,64 @@
+{
+  "name": "csolution-rpc-inspector",
+  "displayName": "csolution-rpc-inspector",
+  "description": "",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.97.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "csolution-rpc-inspector.GetVersion",
+        "title": "csolution: GetVersion"
+      },
+      {
+        "command": "csolution-rpc-inspector.Shutdown",
+        "title": "csolution: Shutdown"
+      },
+      {
+        "command": "csolution-rpc-inspector.LoadPacks",
+        "title": "csolution: LoadPacks"
+      },
+      {
+        "command": "csolution-rpc-inspector.LoadSolution",
+        "title": "csolution: LoadSolution"
+      },
+      {
+        "command": "csolution-rpc-inspector.ListPacks",
+        "title": "csolution: ListPacks"
+      },
+      {
+        "command": "csolution-rpc-inspector.ListComponents",
+        "title": "csolution: ListComponents"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.7",
+    "@types/node": "20.x",
+    "@types/vscode": "^1.97.0",
+    "@typescript-eslint/eslint-plugin": "^8.3.0",
+    "@typescript-eslint/parser": "^8.3.0",
+    "@vscode/test-cli": "^0.0.10",
+    "@vscode/test-electron": "^2.4.1",
+    "eslint": "^9.9.1",
+    "typescript": "^5.5.4"
+  },
+  "dependencies": {
+    "vscode-jsonrpc": "^8.2.1"
+  }
+}
