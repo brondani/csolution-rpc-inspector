@@ -15,29 +15,33 @@
     "commands": [
       {
         "command": "csolution-rpc-inspector.GetVersion",
-        "title": "csolution: GetVersion"
+        "title": "csolution-rpc: GetVersion"
       },
       {
         "command": "csolution-rpc-inspector.Shutdown",
-        "title": "csolution: Shutdown"
+        "title": "csolution-rpc: Shutdown"
       },
       {
         "command": "csolution-rpc-inspector.LoadPacks",
-        "title": "csolution: LoadPacks"
+        "title": "csolution-rpc: LoadPacks"
       },
       {
         "command": "csolution-rpc-inspector.LoadSolution",
-        "title": "csolution: LoadSolution"
+        "title": "csolution-rpc: LoadSolution"
       },
       {
-        "command": "csolution-rpc-inspector.ListPacks",
-        "title": "csolution: ListPacks"
-      },
-      {
-        "command": "csolution-rpc-inspector.ListComponents",
-        "title": "csolution: ListComponents"
+        "command": "csolution-rpc-inspector.GetComponentsInfo",
+        "title": "csolution-rpc: GetComponentsInfo"
       }
-    ]
+    ],
+    "views": {
+        "explorer": [
+            {
+              "id": "componentsView",
+              "name": "Components View"
+            }
+        ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",

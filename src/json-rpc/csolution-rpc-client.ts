@@ -2,13 +2,53 @@ import { ChildProcess, spawn } from "node:child_process";
 import { MessageConnection, ParameterStructures } from "vscode-jsonrpc";
 import { createMessageConnection, StreamMessageReader, StreamMessageWriter } from "vscode-jsonrpc/node";
 
+export interface ISolution {
+    'solution': string
+};
+
+export interface IContext {
+    'context': string
+};
+
+export interface IComponentsList {
+    'components': string[]
+};
+
+export interface IComponent {
+    'id': string;
+    'from-pack': string;
+    'description'?: string;
+    'doc'?: string;
+    'implements'?: string;
+    'selected'?: boolean;
+    'instances'?: number;
+    'maxInstances'?: number;
+}
+
+export interface IApi {
+    'id': string;
+    'description'?: string;
+    'doc'?: string;
+}
+
+export interface ITaxonomy {
+    'id': string;
+    'description'?: string;
+    'doc'?: string;
+}
+
+export interface IComponentsInfo {
+    'components': IComponent[];
+    'taxonomy': ITaxonomy[];
+    'apis': IApi[];
+}
+
 export interface CsolutionService {
     Shutdown(): Promise<void>;
     GetVersion(): Promise<string>;
     LoadPacks(): Promise<void>;
-    LoadSolution(solution: string): Promise<void>;
-    ListPacks(): Promise<string[]>;
-    ListComponents(): Promise<string[]>;
+    LoadSolution(args: ISolution): Promise<void>;
+    GetComponentsInfo(args: IContext): Promise<IComponentsInfo>;
 }
 
 export class CsolutionServiceImpl implements CsolutionService {
@@ -23,10 +63,11 @@ export class CsolutionServiceImpl implements CsolutionService {
         if (!this.child && !this.launch()) {
             return undefined;
         }
+        console.log('csolution rpc request:', method);
         const response = params ?
             await this.connection?.sendRequest<TResponse>(method, params) :
             await this.connection?.sendRequest<TResponse>(method);
-        console.log('csolution rpc request:', method, response);
+        console.log('csolution rpc response:', response);
         return response;
     }
 
@@ -43,14 +84,6 @@ export class CsolutionServiceImpl implements CsolutionService {
             new StreamMessageReader(this.child.stdout),
             new StreamMessageWriter(this.child.stdin)
         );
-
-        // Trace sent/received data
-        this.child.stdin?.on('data', (data) => {
-            console.log('csolution rpc sent', data.toString());
-        });
-        this.child.stdout?.on('data', (data) => {
-            console.log('csolution rpc received', data.toString());
-        });
 
         // Listen for child process close event
         this.child.on('close', () => {
@@ -83,19 +116,12 @@ export class CsolutionServiceImpl implements CsolutionService {
         await this.transceive<Boolean>('LoadPacks');
     }
 
-    public async LoadSolution(solution: string): Promise<void> {
-        await this.transceive<Boolean>('LoadSolution', solution);
+    public async LoadSolution(args: ISolution): Promise<void> {
+        await this.transceive<Boolean>('LoadSolution', args);
     }
 
-    public async ListPacks(): Promise<string[]> {
-        type ListPacksResponse = string[];
-        const response = await this.transceive<ListPacksResponse>('ListPacks');
-        return response ?? [];
-    }
-
-    public async ListComponents(): Promise<string[]> {
-        type ListComponentsResponse = string[];
-        const response = await this.transceive<ListComponentsResponse>('ListComponents');
-        return response ?? [];
+    public async GetComponentsInfo(args: IContext): Promise<IComponentsInfo> {
+        const response = await this.transceive<IComponentsInfo>('GetComponentsInfo', args);
+        return (response ?? {}) as IComponentsInfo;
     }
 }

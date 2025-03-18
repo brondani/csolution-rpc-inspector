@@ -1,9 +1,7 @@
 import * as vscode from 'vscode';
 // Transport layer: JSON-RPC 
 import { CsolutionServiceImpl } from './json-rpc/csolution-rpc-client';
-// Transport layer: protobuf
-//import { CsolutionServiceImpl } from './protobuf/cproto-service';
-
+import { ComponentsTreeProvider } from './treeview';
 
 export class CsolutionManager {
 
@@ -20,26 +18,24 @@ export class CsolutionManager {
     }
 
     public async LoadPacks(): Promise<void> {
+        const start = new Date().getTime();
         await this.csolutionService.LoadPacks();
-        vscode.window.showInformationMessage(`csolution rpc: LoadPacks`);
+        console.log('Time elapsed for LoadPacks', new Date().getTime() - start);
     }
 
     public async LoadSolution(): Promise<void> {
         if (vscode.window.activeTextEditor) {
-            await this.csolutionService.LoadSolution(vscode.window.activeTextEditor.document.fileName);
+            const start = new Date().getTime();
+            const solution = vscode.window.activeTextEditor.document.fileName;
+            await this.csolutionService.LoadSolution({solution: solution});
+            console.log('Time elapsed for LoadSolution', new Date().getTime() - start);
         }
-        vscode.window.showInformationMessage(`csolution rpc: LoadSolution`);
     }
 
-    public async ListPacks(): Promise<void> {
-        await this.csolutionService.ListPacks();
-        vscode.window.showInformationMessage(`csolution rpc: ListPacks`);
-    }
-
-    public async ListComponents(): Promise<void> {
+    public async GetComponentsInfo(context: string, treeDataProvider: ComponentsTreeProvider): Promise<void> {
         const start = new Date().getTime();
-        await this.csolutionService.ListComponents();
-        console.log('Time elapsed for ListComponents', new Date().getTime() - start);
-        vscode.window.showInformationMessage(`csolution rpc: ListComponents`);
+        const componentsInfo = await this.csolutionService.GetComponentsInfo({context: context});
+        console.log('Time elapsed for GetComponentsInfo', new Date().getTime() - start);
+        treeDataProvider.refresh(componentsInfo);
     }
 }
