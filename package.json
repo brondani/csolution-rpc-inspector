@@ -3,6 +3,9 @@
   "displayName": "csolution-rpc-inspector",
   "description": "",
   "version": "0.0.1",
+  "publisher": "Arm",
+  "author": "Daniel Brondani <daniel.brondani@arm.com>",
+  "repository": "https://github.com/brondani/csolution-rpc-inspector",
   "engines": {
     "vscode": "^1.97.0"
   },
@@ -30,8 +33,16 @@
         "title": "csolution-rpc: LoadSolution"
       },
       {
+        "command": "csolution-rpc-inspector.GetPacksInfo",
+        "title": "csolution-rpc: GetPacksInfo"
+      },
+      {
         "command": "csolution-rpc-inspector.GetComponentsInfo",
         "title": "csolution-rpc: GetComponentsInfo"
+      },
+      {
+        "command": "csolution-rpc-inspector.ValidateComponents",
+        "title": "csolution-rpc: ValidateComponents"
       }
     ],
     "views": {

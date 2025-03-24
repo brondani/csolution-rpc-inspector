@@ -1,3 +1,4 @@
+import * as vscode from 'vscode';
 import { ChildProcess, spawn } from "node:child_process";
 import { MessageConnection, ParameterStructures } from "vscode-jsonrpc";
 import { createMessageConnection, StreamMessageReader, StreamMessageWriter } from "vscode-jsonrpc/node";
@@ -10,9 +11,22 @@ export interface IContext {
     'context': string
 };
 
-export interface IComponentsList {
+export interface IValidateComponents {
+    'context': string
     'components': string[]
 };
+
+export interface IPack {
+    'id': string;
+    'description'?: string;
+    'overview'?: string;
+    'used'?: boolean;
+    'references'?: string[];
+}
+
+export interface IPacksInfo {
+    'packs': IPack[];
+}
 
 export interface IComponent {
     'id': string;
@@ -43,17 +57,35 @@ export interface IComponentsInfo {
     'apis': IApi[];
 }
 
+export interface ICondition {
+    'expression': string;
+    'aggregates'?: string[];
+}
+
+export interface IResult {
+    'result': string;
+    'id': string;
+    'aggregates'?: string[];
+    'conditions'?: ICondition[];
+}
+
+export interface IResults {
+    'validation'?: IResult[];
+}
+
 export interface CsolutionService {
     Shutdown(): Promise<void>;
     GetVersion(): Promise<string>;
     LoadPacks(): Promise<void>;
     LoadSolution(args: ISolution): Promise<void>;
+    GetPacksInfo(args: IContext): Promise<IPacksInfo>;
     GetComponentsInfo(args: IContext): Promise<IComponentsInfo>;
+    ValidateComponents(args: IValidateComponents): Promise<IResults>;
 }
 
 export class CsolutionServiceImpl implements CsolutionService {
 
-    // private members and functions for client handlig ---------------------------------
+    // private members and functions for client handling ---------------------------------
     private child: ChildProcess|undefined;
     private connection: MessageConnection|undefined;
 
@@ -72,7 +104,9 @@ export class CsolutionServiceImpl implements CsolutionService {
     }
 
     private launch(): Boolean {
-        this.child = spawn('csolution', ['rpc', '--content-length']);
+        this.child = spawn('csolution', ['rpc', '--content-length'], // use --debug to log json raw messages
+            { cwd: vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders[0].uri.fsPath : './' }
+        );
         if (!this.child || !this.child.pid || !this.child.stdout || !this.child.stdin) {
             console.error(`csolution rpc launch failed`);
             return false;
@@ -120,8 +154,18 @@ export class CsolutionServiceImpl implements CsolutionService {
         await this.transceive<Boolean>('LoadSolution', args);
     }
 
+    public async GetPacksInfo(args: IContext): Promise<IPacksInfo> {
+        const response = await this.transceive<IPacksInfo>('GetPacksInfo', args);
+        return (response ?? {}) as IPacksInfo;
+    }
+
     public async GetComponentsInfo(args: IContext): Promise<IComponentsInfo> {
         const response = await this.transceive<IComponentsInfo>('GetComponentsInfo', args);
         return (response ?? {}) as IComponentsInfo;
+    }
+
+    public async ValidateComponents(args: IValidateComponents): Promise<IResults> {
+        const results = await this.transceive<Boolean>('ValidateComponents', args);
+        return (results ?? {}) as IResults;
     }
 }

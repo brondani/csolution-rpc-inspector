@@ -1,41 +1,83 @@
 import * as vscode from 'vscode';
-// Transport layer: JSON-RPC 
 import { CsolutionServiceImpl } from './json-rpc/csolution-rpc-client';
 import { ComponentsTreeProvider } from './treeview';
+
+const outputChannel = vscode.window.createOutputChannel("csolution-rpc");
 
 export class CsolutionManager {
 
     private csolutionService = new CsolutionServiceImpl();
 
     public async GetVersion(): Promise<void> {
-        const version = await this.csolutionService.GetVersion();
-        vscode.window.showInformationMessage(`csolution rpc: GetVersion: ${version}`);
+        const version = await this.csolutionService.GetVersion()
+            .catch(error => outputChannel.appendLine(`[error]: ${error}`));
+        outputChannel.appendLine(`[request]: GetVersion: ${version}`);
     }
 
     public async Shutdown(): Promise<void> {
-        await this.csolutionService.Shutdown();
-        vscode.window.showInformationMessage(`csolution rpc: Shutdown`);
+        await this.csolutionService.Shutdown()
+            .catch(error => outputChannel.appendLine(`[error]: ${error}`));
+        outputChannel.appendLine(`[request]: Shutdown`);
+
     }
 
     public async LoadPacks(): Promise<void> {
         const start = new Date().getTime();
-        await this.csolutionService.LoadPacks();
-        console.log('Time elapsed for LoadPacks', new Date().getTime() - start);
+        await this.csolutionService.LoadPacks()
+            .catch(error => outputChannel.appendLine(`[error]: ${error}`));
+        const elapsedTime = new Date().getTime() - start;
+        outputChannel.appendLine(`[request]: LoadPacks - time elapsed: ${elapsedTime}`);
     }
 
     public async LoadSolution(): Promise<void> {
         if (vscode.window.activeTextEditor) {
-            const start = new Date().getTime();
             const solution = vscode.window.activeTextEditor.document.fileName;
-            await this.csolutionService.LoadSolution({solution: solution});
-            console.log('Time elapsed for LoadSolution', new Date().getTime() - start);
+            const start = new Date().getTime();
+            await this.csolutionService.LoadSolution({solution: solution})
+                .catch(error => outputChannel.appendLine(`[error]: ${error}`));
+            const elapsedTime = new Date().getTime() - start;
+            outputChannel.appendLine(`[request]: LoadSolution - time elapsed: ${elapsedTime}`);
         }
     }
 
-    public async GetComponentsInfo(context: string, treeDataProvider: ComponentsTreeProvider): Promise<void> {
+    public async GetPacksInfo(treeDataProvider: ComponentsTreeProvider): Promise<void> {
+        const context = await vscode.window.showInputBox({
+            prompt: "Enter the context in the format <project>.<build-type>+<target-type>",
+        });
         const start = new Date().getTime();
-        const componentsInfo = await this.csolutionService.GetComponentsInfo({context: context});
-        console.log('Time elapsed for GetComponentsInfo', new Date().getTime() - start);
-        treeDataProvider.refresh(componentsInfo);
+        const packsInfo = await this.csolutionService.GetPacksInfo({context: context ?? ''})
+            .catch(error => outputChannel.appendLine(`[error]: ${error}`));
+        const elapsedTime = new Date().getTime() - start;
+        outputChannel.appendLine(`[request]: GetPacksInfo - time elapsed: ${elapsedTime}`);
+        treeDataProvider.refreshPacks(packsInfo!);
+    }
+    
+    public async GetComponentsInfo(treeDataProvider: ComponentsTreeProvider): Promise<void> {
+        const context = await vscode.window.showInputBox({
+            prompt: "Enter the context in the format <project>.<build-type>+<target-type>",
+        });
+        const start = new Date().getTime();
+        const componentsInfo = await this.csolutionService.GetComponentsInfo({context: context ?? ''})
+            .catch(error => outputChannel.appendLine(`[error]: ${error}`));
+        const elapsedTime = new Date().getTime() - start;
+        outputChannel.appendLine(`[request]: GetComponentsInfo - time elapsed: ${elapsedTime}`);
+        treeDataProvider.refreshComponents(componentsInfo!);
+    }
+
+    public async ValidateComponents(treeView: vscode.TreeView<vscode.TreeItem>): Promise<void> {
+        if (vscode.window.activeTextEditor) {
+            const context = await vscode.window.showInputBox({
+                prompt: "Enter the context in the format <project>.<build-type>+<target-type>",
+            });
+            const selection: string[] = treeView.selection
+                .map(item => typeof item.label === 'string' ? item.label : item.label?.label)
+                .filter((label): label is string => Boolean(label));
+            const start = new Date().getTime();
+            const validationResults = await this.csolutionService.ValidateComponents({context: context ?? '', components: selection})
+                .catch(error => outputChannel.appendLine(`[error]: ${error}`));
+            const elapsedTime = new Date().getTime() - start;
+            outputChannel.appendLine(`[request] ValidateComponents - time elapsed: ${elapsedTime}`);
+            outputChannel.appendLine(`Validation results: ${JSON.stringify(validationResults, null, 2)}`);
+        }
     }
 }

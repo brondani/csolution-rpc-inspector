@@ -2,7 +2,7 @@
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
 import { CsolutionManager } from './csolution-manager';
-import { ComponentsTreeProvider, TreeItem } from './treeview';
+import { ComponentsTreeProvider } from './treeview';
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -19,8 +19,11 @@ export function activate(context: vscode.ExtensionContext) {
     // Now provide the implementation of the command with registerCommand
     // The commandId parameter must match the command field in package.json
 
-    const treeDataProvider = new ComponentsTreeProvider({"apis" : [], "components" : [], "taxonomy" : []});
-    const treeView = vscode.window.createTreeView('componentsView', { treeDataProvider });
+    const treeDataProvider = new ComponentsTreeProvider();
+    const treeView = vscode.window.createTreeView('componentsView', {
+		treeDataProvider,
+		canSelectMany: true,
+	});
     context.subscriptions.push(treeView);
 
     const GetVersion = vscode.commands.registerCommand('csolution-rpc-inspector.GetVersion', () => {
@@ -38,12 +41,17 @@ export function activate(context: vscode.ExtensionContext) {
     const LoadSolution = vscode.commands.registerCommand('csolution-rpc-inspector.LoadSolution', () => {
       csolution.LoadSolution();
     });
+
+    const GetPacksInfo = vscode.commands.registerCommand('csolution-rpc-inspector.GetPacksInfo', async () => {
+      csolution.GetPacksInfo(treeDataProvider);
+    });
   
     const GetComponentsInfo = vscode.commands.registerCommand('csolution-rpc-inspector.GetComponentsInfo', async () => {
-      const userInput = await vscode.window.showInputBox({
-        prompt: "Enter the context in the format <project>.<build-type>+<target-type>",
-      });
-      csolution.GetComponentsInfo(userInput ?? '', treeDataProvider);
+      csolution.GetComponentsInfo(treeDataProvider);
+    });
+
+    const ValidateComponents = vscode.commands.registerCommand('csolution-rpc-inspector.ValidateComponents', () => {
+        csolution.ValidateComponents(treeView);
     });
 
     context.subscriptions.push(
@@ -51,7 +59,9 @@ export function activate(context: vscode.ExtensionContext) {
         Shutdown,
         LoadPacks,
         LoadSolution,
-        GetComponentsInfo
+        GetPacksInfo,
+        GetComponentsInfo,
+        ValidateComponents
     );
 }
 
