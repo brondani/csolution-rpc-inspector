@@ -1,0 +1,428 @@
+{
+  "openrpc": "1.2.4",
+  "info": {
+    "title": "csolution rpc",
+    "description": "Specification of remote procedure call methods for CMSIS csolution integration",
+    "version": "0.0.1",
+    "license": {
+      "name": "Apache 2.0"
+    }
+  },
+  "methods": [
+    {
+      "name": "GetVersion",
+      "summary": "Get version of csolution rpc server",
+      "description": "Get version of csolution rpc server",
+      "params": [],
+      "result": {
+        "name": "version",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "examples": [{
+        "name": "GetVersion Example",
+        "params": [],
+        "result": {
+          "name": "version",
+          "value": "2.9.0-jsonrpc2"
+        }
+      }]
+    },
+    {
+      "name": "Shutdown",
+      "summary": "Shutdown csolution rpc server",
+      "description": "Shutdown csolution rpc server",
+      "params": [],
+      "result": {
+        "name": "result",
+        "description": "Returns true when the csolution server agrees to shutdown gracefully",
+        "schema": {
+          "type": "boolean"
+        }
+      },
+      "examples": [{
+        "name": "Shutdown Example",
+        "params": [],
+        "result": {
+          "name": "result",
+          "value": "true"
+        }
+      }]
+    },
+    {
+      "name": "LoadPacks",
+      "summary": "Load installed and local packs",
+      "description": "Load packs indexed in the CMSIS_PACK_ROOT",
+      "params": [],
+      "result": {
+        "name": "result",
+        "description": "Returns true when the packs loading is completed successfully",
+        "schema": {
+          "type": "boolean"
+        }
+      },
+      "examples": [{
+        "name": "LoadPacks Example",
+        "params": [],
+        "result": {
+          "name": "result",
+          "value": "true"
+        }
+      }]
+    },
+    {
+      "name": "LoadSolution",
+      "summary": "Load solution",
+      "description": "Load solution",
+      "paramStructure": "by-name",
+      "params": [
+        {
+          "name": "solution",
+          "description": "Path to <solution>.csolution.yml file",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "result": {
+        "name": "result",
+        "description": "Returns true when the solution loading is completed successfully",
+        "schema": {
+          "type": "boolean"
+        }
+      },
+      "examples": [{
+        "name": "LoadSolution Example",
+        "params": [{
+          "name": "solution",
+          "value": "path/to/solution.csolution.yml"
+        }],
+        "result": {
+          "name": "result",
+          "value": "true"
+        }
+      }]
+    },
+    {
+      "name": "GetPacksInfo",
+      "summary": "Get installed and local packs information",
+      "description": "Get installed and local packs information",
+      "paramStructure": "by-name",
+      "params": [
+        {
+          "name": "context",
+          "description": "Context in the format <project>.<build-type>+<target-type>",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "result": {
+        "name": "packs",
+        "description": "Packs information",
+        "schema": {
+          "$ref": "#/components/schemas/PacksInfo"
+        }
+      },
+      "examples": [{
+        "name": "GetPacksInfo Example",
+        "params": [{
+          "name": "context",
+          "value": "project.build+target"
+        }],
+        "result": {
+          "name": "result",
+          "value": {
+            "packs": [{
+              "description": "CMSIS (Common Microcontroller Software Interface Standard)",
+              "id": "ARM::CMSIS@6.1.0",
+              "overview": "arm/packs/ARM/CMSIS/6.1.0/CMSIS/Documentation/Overview.md",
+              "references": ["solution.csolution.yml", "project.cproject.yml", "board.clayer.yml"],
+              "used":true
+            }]
+          }
+        }
+      }]
+    },
+    {
+      "name": "GetComponentsInfo",
+      "summary": "Get filtered components, APIs and taxonomy information",
+      "description": "Get filtered components, APIs and taxonomy information",
+      "paramStructure": "by-name",
+      "params": [
+        {
+          "name": "context",
+          "description": "Context in the format <project>.<build-type>+<target-type>",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "result": {
+        "name": "components",
+        "description": "Components information",
+        "schema": {
+          "$ref": "#/components/schemas/ComponentsInfo"
+        }
+      },
+      "examples": [{
+        "name": "GetComponentsInfo Example",
+        "params": [{
+          "name": "context",
+          "value": "project.build+target"
+        }],
+        "result": {
+          "name": "result",
+          "value": {
+            "apis": [{
+              "description" : "CAN Driver API for Cortex-M",
+              "doc" : "arm/packs/ARM/CMSIS/6.1.0/CMSIS/Documentation/html/Driver/group__can__interface__gr.html",
+              "id":"CMSIS Driver:CAN@1.3.0" 
+            }],
+            "components": [{
+              "description":"An all-in-one generic benchmark for arm-2d.",
+              "from-pack":"ARM::Arm-2D@1.1.5",
+              "id":"ARM::Acceleration:Arm-2D Extras:Benchmark-Generic@1.4.0"
+            }],
+            "taxonomy": [{
+              "description":"A 2D Image Processing Library for Cortex-M Processors",
+              "doc":"C:/Users/danbro01/AppData/Local/arm/packs/ARM/Arm-2D/1.1.5/documentation/index.html",
+              "id":"Acceleration:Arm-2D"
+            }]
+          }
+        }
+      }]
+    },
+    {
+      "name": "ValidateComponents",
+      "summary": "Validate components list",
+      "description": "Validate components list",
+      "paramStructure": "by-name",
+      "params": [
+        {
+          "name": "context",
+          "description": "Context in the format <project>.<build-type>+<target-type>",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "components",
+          "description": "List of component identifiers",
+          "required": true,
+          "schema": {
+            "type": "array", "items": { "type": "string" }
+          }
+        }
+      ],
+      "result": {
+        "name": "validation",
+        "description": "Validation information",
+        "schema": {
+          "$ref": "#/components/schemas/ValidationResults"
+        }
+      },
+      "examples": [{
+        "name": "ValidateComponents Example",
+        "params": [
+          {
+            "name": "context",
+            "value": "project.build+target"
+          },
+          {
+            "name": "components",
+            "value": ["ARM::CMSIS:CORE@6.1.0","ARM::CMSIS:RTOS2:Keil RTX5&Source@5.9.0"]
+          }
+        ],
+        "result": {
+          "name": "result",
+          "value": {
+            "validation": [{
+              "conditions": [{
+                  "aggregates": ["ARM::CMSIS:OS Tick:SysTick"],
+                  "expression": "require CMSIS:OS Tick"
+              }],
+              "id": "ARM::CMSIS:RTOS2:Keil RTX5&Source@5.9.0",
+              "result": "SELECTABLE"
+            }]
+          }
+        }
+      }]
+    }
+  ],
+  "components": {
+    "schemas": {
+      "PacksInfo": {
+        "type": "object",
+        "properties": {
+          "packs": {
+            "type": "array",
+            "description": "List of packs information",
+            "items": {
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "Pack identifier"
+                },
+                "description": {
+                  "type": "string",
+                  "description": "Pack description"
+                },
+                "overview": {
+                  "type": "string",
+                  "description": "Pack overview"
+                },
+                "used": {
+                  "type": "boolean",
+                  "description": "True when pack is used in the current context"
+                },
+                "references": {
+                  "type": "array",
+                  "description": "List of yml files where the pack is referenced",
+                  "items": { "type": "string" }
+                }
+              },
+              "required": ["id"]
+            }
+          }
+        }
+      },
+      "ComponentsInfo": {
+        "type": "object",
+        "properties": {
+          "components": {
+            "type": "array",
+            "description": "List of components information",
+            "items": {
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "Component identifier"
+                },
+                "from-pack": {
+                  "type": "string",
+                  "description": "Pack that defines this component"
+                },
+                "description": {
+                  "type": "string",
+                  "description": "Component description"
+                },
+                "implements": {
+                  "type": "string",
+                  "description": "Refers to the API that the component is based on"
+                },
+                "selected": {
+                  "type": "boolean",
+                  "description": "True when component is selected in the current context"
+                },
+                "instances": {
+                  "type": "integer",
+                  "description": "Number of component instances configured"
+                },
+                "maxInstances": {
+                  "type": "integer",
+                  "description": "Maximum of supported component instances"
+                }
+              },
+              "required": ["id", "from-pack"]
+            }
+          },
+          "taxonomy": {
+            "type": "array",
+            "description": "List of taxonomy entries",
+            "items": {
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "Taxonomy identifier"
+                },
+                "description": {
+                  "type": "string",
+                  "description": "Taxonomy description"
+                },
+                "doc": {
+                  "type": "string",
+                  "description": "Taxonomy documentation"
+                }
+              },
+              "required": ["id"]
+            }
+          },
+          "apis": {
+            "type": "array",
+            "description": "List of APIs",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "API identifier"
+                },
+                "description": {
+                  "type": "string",
+                  "description": "API description"
+                },
+                "doc": {
+                  "type": "string",
+                  "description": "API documentation"
+                }
+              },
+              "required": ["id"]
+            }
+          }
+        }
+      },
+      "Condition": {
+        "properties": {
+          "expression": {
+            "type": "string",
+            "description": "Condition expression (accept, require, deny ...)"
+          },
+          "aggregates": {
+            "type": "array",
+            "description": "List of aggregates related to this condition",
+            "items": { "type": "string" }
+          }
+        },
+        "required": ["expression"]
+      },
+      "Result": {
+        "properties": {
+          "result":{
+            "type": "string",
+            "description": "Condition result: https://github.com/Open-CMSIS-Pack/devtools/blob/tools/projmgr/2.8.0/libs/rtemodel/include/RteItem.h#L78-L95"
+           },
+          "id": {
+            "type": "string",
+            "description": "Component or API identifier"
+          },
+          "aggregates": {
+            "type": "array",
+            "description": "List of aggregates related to this result",
+            "items": { "type": "string" }
+          },
+          "conditions": {
+            "type": "array",
+            "description": "List of conditions related to this result",
+            "items": { "$ref": "#/components/schemas/Condition" }
+          }
+        },
+        "required": ["id", "result"]
+      },
+      "ValidationResults": {
+        "properties": {
+          "validation": {
+            "type": "array",
+            "description": "List of validation results",
+            "items": { "$ref": "#/components/schemas/Result" }
+          }
+        }
+      }
+    }
+  }
+}
