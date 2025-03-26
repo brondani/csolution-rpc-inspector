@@ -3,10 +3,11 @@ import { CsolutionServiceImpl } from './json-rpc/csolution-rpc-client';
 import { ComponentsTreeProvider } from './treeview';
 
 const outputChannel = vscode.window.createOutputChannel("csolution-rpc");
+const cwd = vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders[0].uri.fsPath : './';
 
 export class CsolutionManager {
 
-    private csolutionService = new CsolutionServiceImpl();
+    private csolutionService = new CsolutionServiceImpl(cwd);
 
     public async GetVersion(): Promise<void> {
         const version = await this.csolutionService.GetVersion()

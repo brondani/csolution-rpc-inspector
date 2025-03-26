@@ -1,4 +1,3 @@
-import * as vscode from 'vscode';
 import { ChildProcess, spawn } from "node:child_process";
 import { MessageConnection, ParameterStructures } from "vscode-jsonrpc";
 import { createMessageConnection, StreamMessageReader, StreamMessageWriter } from "vscode-jsonrpc/node";
@@ -88,6 +87,11 @@ export class CsolutionServiceImpl implements CsolutionService {
     // private members and functions for client handling ---------------------------------
     private child: ChildProcess|undefined;
     private connection: MessageConnection|undefined;
+    private cwd: string;
+
+    constructor(cwd: string) {
+        this.cwd = cwd;
+    }
 
     private async transceive<TResponse>
         (method: string, params?: ParameterStructures | any, ...rest: any[]):
@@ -105,7 +109,7 @@ export class CsolutionServiceImpl implements CsolutionService {
 
     private launch(): Boolean {
         this.child = spawn('csolution', ['rpc', '--content-length'], // use --debug to log json raw messages
-            { cwd: vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders[0].uri.fsPath : './' }
+            { cwd: this.cwd }
         );
         if (!this.child || !this.child.pid || !this.child.stdout || !this.child.stdin) {
             console.error(`csolution rpc launch failed`);
