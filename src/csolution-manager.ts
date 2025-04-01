@@ -19,7 +19,6 @@ export class CsolutionManager {
         await this.csolutionService.Shutdown()
             .catch(error => outputChannel.appendLine(`[error]: ${error}`));
         outputChannel.appendLine(`[request]: Shutdown`);
-
     }
 
     public async LoadPacks(): Promise<void> {
@@ -80,5 +79,12 @@ export class CsolutionManager {
             outputChannel.appendLine(`[request] ValidateComponents - time elapsed: ${elapsedTime}`);
             outputChannel.appendLine(`Validation results: ${JSON.stringify(validationResults, null, 2)}`);
         }
+    }
+
+    public async GetLogMessages(): Promise<void> {
+        const logMessages = await this.csolutionService.GetLogMessages()
+            .catch(error => outputChannel.appendLine(`[error]: ${error}`));
+        outputChannel.appendLine(`[request]: GetLogMessages`);
+        outputChannel.appendLine(`Log Messages: ${JSON.stringify(logMessages, null, 2)}`);
     }
 }

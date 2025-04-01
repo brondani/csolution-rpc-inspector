@@ -54,6 +54,10 @@ export function activate(context: vscode.ExtensionContext) {
         csolution.ValidateComponents(treeView);
     });
 
+    const GetLogMessages = vscode.commands.registerCommand('csolution-rpc-inspector.GetLogMessages', () => {
+      csolution.GetLogMessages();
+  });
+
     context.subscriptions.push(
         GetVersion,
         Shutdown,
@@ -61,7 +65,8 @@ export function activate(context: vscode.ExtensionContext) {
         LoadSolution,
         GetPacksInfo,
         GetComponentsInfo,
-        ValidateComponents
+        ValidateComponents,
+        GetLogMessages
     );
 }
 

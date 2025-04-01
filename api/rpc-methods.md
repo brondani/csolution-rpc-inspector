@@ -87,3 +87,15 @@ Response:
   }]
 }}
 ```
+## GetLogMessages
+Request:
+``` json
+{"jsonrpc":"2.0","id":6,"method":"GetLogMessages"}
+```
+Response:
+``` json
+{"id":6,"jsonrpc":"2.0","result":{
+  "errors":["missing device and/or board info"],
+  "warnings":["windows-amd64 - manifest file does not exist"]
+}}
+```

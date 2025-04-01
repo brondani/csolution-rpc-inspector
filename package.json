@@ -43,6 +43,10 @@
       {
         "command": "csolution-rpc-inspector.ValidateComponents",
         "title": "csolution-rpc: ValidateComponents"
+      },
+      {
+        "command": "csolution-rpc-inspector.GetLogMessages",
+        "title": "csolution-rpc: GetLogMessages"
       }
     ],
     "views": {

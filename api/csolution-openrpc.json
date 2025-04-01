@@ -253,6 +253,29 @@
           }
         }
       }]
+    },
+    {
+      "name": "GetLogMessages",
+      "summary": "Get logged messages",
+      "description": "Get info, errors and warnings logged during processing",
+      "params": [],
+      "result": {
+        "name": "messages",
+        "schema" : {
+          "$ref": "#/components/schemas/LogMessages"
+        }
+      },
+      "examples": [{
+        "name": "GetLogMessages Example",
+        "params": [],
+        "result": {
+          "name": "result",
+          "value": {
+            "errors": ["missing device and/or board info"],
+            "warnings": ["windows-amd64 - manifest file does not exist"]
+          }
+        }
+      }]
     }
   ],
   "components": {
@@ -421,6 +444,15 @@
             "description": "List of validation results",
             "items": { "$ref": "#/components/schemas/Result" }
           }
+        }
+      },
+      "LogMessages": {
+        "type": "object",
+        "description": "List of logged info, errors and warnings",
+        "properties": {
+          "info": { "type": "array", "items": [{ "type": "string" }]},
+          "errors": { "type": "array", "items": [{ "type": "string" }]},
+          "warnings": { "type": "array", "items": [{ "type": "string" }]}
         }
       }
     }

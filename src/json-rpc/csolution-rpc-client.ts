@@ -72,6 +72,12 @@ export interface IResults {
     'validation'?: IResult[];
 }
 
+export interface ILogMessages {
+    'info'?: string[];
+    'errors'?: string[];
+    'warnings'?: string[];
+}
+
 export interface CsolutionService {
     Shutdown(): Promise<void>;
     GetVersion(): Promise<string>;
@@ -80,6 +86,7 @@ export interface CsolutionService {
     GetPacksInfo(args: IContext): Promise<IPacksInfo>;
     GetComponentsInfo(args: IContext): Promise<IComponentsInfo>;
     ValidateComponents(args: IValidateComponents): Promise<IResults>;
+    GetLogMessages(): Promise<ILogMessages>;
 }
 
 export class CsolutionServiceImpl implements CsolutionService {
@@ -169,7 +176,12 @@ export class CsolutionServiceImpl implements CsolutionService {
     }
 
     public async ValidateComponents(args: IValidateComponents): Promise<IResults> {
-        const results = await this.transceive<Boolean>('ValidateComponents', args);
+        const results = await this.transceive<IResults>('ValidateComponents', args);
         return (results ?? {}) as IResults;
+    }
+
+    public async GetLogMessages(): Promise<ILogMessages> {
+        const messages = await this.transceive<ILogMessages>('GetLogMessages');
+        return (messages ?? {}) as ILogMessages;
     }
 }
