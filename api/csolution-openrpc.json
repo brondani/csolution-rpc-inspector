@@ -183,6 +183,11 @@
               "doc" : "arm/packs/ARM/CMSIS/6.1.0/CMSIS/Documentation/html/Driver/group__can__interface__gr.html",
               "id":"CMSIS Driver:CAN@1.3.0" 
             }],
+            "bundles": [{
+              "description":"lwIP (Lightweight IP stack)",
+              "doc":"C:/Users/danbro01/AppData/Local/arm/packs/lwIP/lwIP/2.2.0/lwip/doc/doxygen/output/index.html",
+              "id":"lwIP::Network&lwIP@2.2.0"
+            }],
             "components": [{
               "description":"An all-in-one generic benchmark for arm-2d.",
               "from-pack":"ARM::Arm-2D@1.1.5",
@@ -393,6 +398,28 @@
                 "doc": {
                   "type": "string",
                   "description": "API documentation"
+                }
+              },
+              "required": ["id"]
+            }
+          },
+          "bundles": {
+            "type": "array",
+            "description": "List of bundles",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "Bundle identifier"
+                },
+                "description": {
+                  "type": "string",
+                  "description": "Bundle description"
+                },
+                "doc": {
+                  "type": "string",
+                  "description": "Bundle documentation"
                 }
               },
               "required": ["id"]

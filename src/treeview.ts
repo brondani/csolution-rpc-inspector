@@ -5,7 +5,7 @@ export class ComponentsTreeProvider implements vscode.TreeDataProvider<vscode.Tr
     private _onDidChangeTreeData: vscode.EventEmitter<vscode.TreeItem | undefined | void> = new vscode.EventEmitter<vscode.TreeItem | undefined | void>();
     readonly onDidChangeTreeData: vscode.Event<vscode.TreeItem | undefined | void> = this._onDidChangeTreeData.event;
 
-    private componentsInfo: IComponentsInfo = {"apis" : [], "components" : [], "taxonomy" : []};
+    private componentsInfo: IComponentsInfo = {"apis" : [], "components" : [], "taxonomy" : [], "bundles" : []};
     private packsInfo: IPacksInfo = {"packs" : []};
 
     refreshComponents(componentsInfo: IComponentsInfo): void {
@@ -28,6 +28,7 @@ export class ComponentsTreeProvider implements vscode.TreeDataProvider<vscode.Tr
                 new vscode.TreeItem('Components', vscode.TreeItemCollapsibleState.Collapsed),
                 new vscode.TreeItem('APIs', vscode.TreeItemCollapsibleState.Collapsed),
                 new vscode.TreeItem('Taxonomy', vscode.TreeItemCollapsibleState.Collapsed),
+                new vscode.TreeItem('Bundles', vscode.TreeItemCollapsibleState.Collapsed),
                 new vscode.TreeItem('Packs', vscode.TreeItemCollapsibleState.Collapsed),
             ]);
         }
@@ -56,6 +57,13 @@ export class ComponentsTreeProvider implements vscode.TreeDataProvider<vscode.Tr
                 new TreeItem(t.id,
                     `${t.description ? 'Description: ' + t.description : ''}` +
                     `${t.doc ? '\nDoc: ' + t.doc : ''}`
+                    )));
+        }
+        if (element.label === 'Bundles' && this.componentsInfo.bundles) {
+            return Promise.resolve(this.componentsInfo.bundles.map(b =>
+                new TreeItem(b.id,
+                    `${b.description ? 'Description: ' + b.description : ''}` +
+                    `${b.doc ? '\nDoc: ' + b.doc : ''}`
                     )));
         }
         if (element.label === 'Packs' && this.packsInfo.packs) {

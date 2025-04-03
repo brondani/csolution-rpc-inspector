@@ -59,6 +59,11 @@ Response:
     "doc":"arm/packs/ARM/CMSIS/6.1.0/CMSIS/Documentation/html/Driver/group__can__interface__gr.html",
     "id":"CMSIS Driver:CAN@1.3.0"
   }],
+  "bundles":[{
+    "description":"lwIP (Lightweight IP stack)",
+    "doc":"C:/Users/danbro01/AppData/Local/arm/packs/lwIP/lwIP/2.2.0/lwip/doc/doxygen/output/index.html",
+    "id":"lwIP::Network&lwIP@2.2.0"
+  }],
   "components":[{
     "description":"An all-in-one generic benchmark for arm-2d.",
     "from-pack":"ARM::Arm-2D@1.1.5",
@@ -66,7 +71,8 @@ Response:
   }],
   "taxonomy":[{
     "description":"A 2D Image Processing Library for Cortex-M Processors",
-    "doc":"arm/packs/ARM/Arm-2D/1.1.5/documentation/index.html","id":"Acceleration:Arm-2D"
+    "doc":"arm/packs/ARM/Arm-2D/1.1.5/documentation/index.html",
+    "id":"Acceleration:Arm-2D"
   }]
 }}
 ```

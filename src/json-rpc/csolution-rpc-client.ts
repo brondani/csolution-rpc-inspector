@@ -50,10 +50,17 @@ export interface ITaxonomy {
     'doc'?: string;
 }
 
+export interface IBundle {
+    'id': string;
+    'description'?: string;
+    'doc'?: string;
+}
+
 export interface IComponentsInfo {
     'components': IComponent[];
     'taxonomy': ITaxonomy[];
     'apis': IApi[];
+    'bundles': IBundle[];
 }
 
 export interface ICondition {
