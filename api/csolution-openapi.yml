@@ -1,0 +1,356 @@
+openapi: 3.1.0
+info:
+  title: csolution rpc
+  version: 0.0.1
+  description: Specification of remote procedure call methods for CMSIS csolution integration 
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+servers:
+  - url: http://localhost:3000
+
+paths:
+  /rpc/GetVersion:
+    post:
+      summary: Get version of csolution rpc server
+      description: Get version of csolution rpc server
+      tags: [/rpc]
+      requestBody:
+        content: {application/json: {schema: {$ref: '#/components/schemas/GetVersionRequest'}}}
+      responses:
+        '200':
+          description: OK
+          content: {application/json: {schema: {$ref: '#/components/schemas/GetVersionResponse'}}}
+  /rpc/LoadPacks:
+    post:
+      summary: Load installed and local packs
+      description: Load packs indexed in the CMSIS_PACK_ROOT
+      tags: [/rpc]
+      requestBody:
+        content: {application/json: {schema: {$ref: '#/components/schemas/LoadPacksRequest'}}}
+      responses:
+        '200':
+          description: OK
+          content: {application/json: {schema: {$ref: '#/components/schemas/LoadPacksResponse'}}}
+  /rpc/LoadSolution:
+    post:
+      summary: Load solution
+      description: Load solution
+      tags: [/rpc]
+      requestBody:
+        content: {application/json: {schema: {$ref: '#/components/schemas/LoadSolutionRequest'}}}
+      responses:
+        '200':
+          description: OK
+          content: {application/json: {schema: {$ref: '#/components/schemas/LoadSolutionResponse'}}}
+  /rpc/GetPacksInfo:
+    post:
+      summary: Get installed and local packs information
+      description: Get installed and local packs information
+      tags: [/rpc]
+      requestBody:
+        content: {application/json: {schema: {$ref: '#/components/schemas/GetPacksInfoRequest'}}}
+      responses:
+        '200':
+          description: OK
+          content: 
+            application/json: 
+              schema: 
+                $ref: '#/components/schemas/GetPacksInfoResponse'
+  /rpc/GetComponentsInfo:
+    post:
+      summary: Get filtered components, APIs, bundles and taxonomy information
+      description: Get filtered components, APIs, bundles and taxonomy information
+      tags: [/rpc]
+      requestBody:
+        content: {application/json: {schema: {$ref: '#/components/schemas/GetComponentsInfoRequest'}}}
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetComponentsInfoResponse'
+  /rpc/ValidateComponents:
+    post:
+      summary: Validate components list
+      description: Validate components list
+      tags: [/rpc]
+      requestBody:
+        content: 
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ValidateComponentsRequest'
+      responses:
+        '200':
+          description: OK
+          content: {application/json: {schema: {$ref: '#/components/schemas/ValidateComponentsResponse'}}}
+  /rpc/GetLogMessages:
+    post:
+      summary: Get logged messages
+      description: Get info, errors and warnings logged during processing
+      tags: [/rpc]
+      requestBody:
+        content: {application/json: {schema: {$ref: '#/components/schemas/GetLogMessagesRequest'}}}
+      responses:
+        '200':
+          description: OK
+          content: {application/json: {schema: {$ref: '#/components/schemas/GetLogMessagesResponse'}}}
+
+components:
+  schemas:
+    GetVersionRequest:
+      allOf:
+        - $ref: '#/x-jsonrpc-envelope'
+        - properties:
+            method: {type: string, const: GetVersion}
+    GetVersionResponse:
+      allOf:
+        - $ref: '#/x-jsonrpc-envelope'
+        - properties:
+            result:
+              type: string
+    LoadPacksRequest:
+      allOf:
+        - $ref: '#/x-jsonrpc-envelope'
+        - properties:
+            method: {type: string, const: LoadPacks}
+    LoadPacksResponse:
+      allOf:
+        - $ref: '#/x-jsonrpc-envelope'
+        - properties:
+            result:
+              type: boolean
+    LoadSolutionRequest:
+      allOf:
+        - $ref: '#/x-jsonrpc-envelope'
+        - properties:
+            method: {type: string, const: LoadSolution}
+            params:
+              type: object
+              properties:
+                solution:
+                  type: string
+    LoadSolutionResponse:
+      allOf:
+        - $ref: '#/x-jsonrpc-envelope'
+        - properties:
+            result:
+              type: boolean
+    GetPacksInfoRequest:
+      allOf:
+        - $ref: '#/x-jsonrpc-envelope'
+        - properties:
+            method: {type: string, const: GetPacksInfo}
+            params:
+              type: object
+              properties:
+                context:
+                  type: string
+    GetPacksInfoResponse:
+      allOf:
+        - $ref: '#/x-jsonrpc-envelope'
+        - properties:
+            result:
+              type: object
+              properties:
+                packs:
+                  type: array
+                  description: List of packs information
+                  items:
+                    properties:
+                      id:
+                        type: string
+                        description: Pack identifier
+                      description:
+                        type: string
+                        description: Pack description
+                      overview:
+                        type: string
+                        description: Pack overview
+                      used:
+                        type: boolean
+                        description: True when pack is used in the current context
+                      references:
+                        type: array
+                        description: List of yml files where the pack is referenced
+                        items:
+                          type: string
+                    required:
+                      - id
+    GetComponentsInfoRequest:
+      allOf:
+        - $ref: '#/x-jsonrpc-envelope'
+        - properties:
+            method: {type: string, const: GetComponentsInfo}
+            params:
+              type: object
+              properties:
+                context:
+                  type: string
+    GetComponentsInfoResponse:
+      allOf:
+        - $ref: '#/x-jsonrpc-envelope'
+        - properties:
+            components:
+              type: array
+              description: List of components information
+              items:
+                properties:
+                  id:
+                    type: string
+                    description: Component identifier
+                  from-pack:
+                    type: string
+                    description: Pack that defines this component
+                  description:
+                    type: string
+                    description: Component description
+                  implements:
+                    type: string
+                    description: Refers to the API that the component is based on
+                  selected:
+                    type: boolean
+                    description: True when component is selected in the current context
+                  instances:
+                    type: integer
+                    description: Number of component instances configured
+                  maxInstances:
+                    type: integer
+                    description: Maximum of supported component instances
+                required:
+                  - id
+                  - from-pack
+            taxonomy:
+              type: array
+              description: List of taxonomy entries
+              items:
+                properties:
+                  id:
+                    type: string
+                    description: Taxonomy identifier
+                  description:
+                    type: string
+                    description: Taxonomy description
+                  doc:
+                    type: string
+                    description: Taxonomy documentation
+                required:
+                  - id
+            apis:
+              type: array
+              description: List of APIs
+              items:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: API identifier
+                  description:
+                    type: string
+                    description: API description
+                  doc:
+                    type: string
+                    description: API documentation
+                required:
+                  - id
+            bundles:
+              type: array
+              description: List of bundles
+              items:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: Bundle identifier
+                  description:
+                    type: string
+                    description: Bundle description
+                  doc:
+                    type: string
+                    description: Bundle documentation
+                required:
+                  - id
+    ValidateComponentsRequest:
+      allOf:
+        - $ref: '#/x-jsonrpc-envelope'
+        - properties:
+            method: {type: string, const: ValidateComponents}
+            params:
+              type: object
+              properties:
+                context:
+                  type: string
+                components:
+                  type: array
+                  items:
+                    type: string
+    ValidateComponentsResponse:
+      allOf:
+        - $ref: '#/x-jsonrpc-envelope'
+        - properties:
+            validation:
+              type: array
+              description: List of validation results
+              items:
+                properties:
+                  result:
+                    type: string
+                    description: 'Condition result: https://github.com/Open-CMSIS-Pack/devtools/blob/tools/projmgr/2.8.0/libs/rtemodel/include/RteItem.h#L78-L95'
+                  id:
+                    type: string
+                    description: Component or API identifier
+                  aggregates:
+                    type: array
+                    description: List of aggregates related to this result
+                    items:
+                      type: string
+                  conditions:
+                    type: array
+                    description: List of conditions related to this result
+                    items:
+                      properties:
+                        expression:
+                          type: string
+                          description: Condition expression (accept, require, deny ...)
+                        aggregates:
+                          type: array
+                          description: List of aggregates related to this condition
+                          items:
+                            type: string
+                      required:
+                        - expression
+                required:
+                  - id
+                  - result
+    GetLogMessagesRequest:
+      allOf:
+        - $ref: '#/x-jsonrpc-envelope'
+        - properties:
+            method: {type: string, const: GetLogMessages}
+    GetLogMessagesResponse:
+      allOf:
+        - $ref: '#/x-jsonrpc-envelope'
+        - description: List of logged info, errors and warnings
+          properties:
+            info:
+              type: array
+              items:
+                type: string
+            errors:
+              type: array
+              items:
+                type: string
+            warnings:
+              type: array
+              items:
+                type: string
+
+x-jsonrpc-envelope:
+  type: object
+  properties:
+    jsonrpc:
+      type: string
+      const: '2.0'
+    id:
+      type: number
